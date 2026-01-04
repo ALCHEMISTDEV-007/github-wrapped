@@ -1,9 +1,22 @@
 from fastapi import FastAPI
+from dotenv import load_dotenv
+import os
+from auth import router as auth_router
 
-app = FastAPI(title="GitHub Wrapped API")
+load_dotenv()
+
+app = FastAPI(title="Wrapped for GitHub")
+
+app.include_router(auth_router)
 
 @app.get("/")
 def root():
+    return {"message": "Wrapped for GitHub API running 🚀"}
+
+@app.get("/health")
+def health():
     return {
-        "message": "GitHub Wrapped API is running 🚀"
+        "client_id_loaded": bool(os.getenv("GITHUB_CLIENT_ID")),
+        "client_secret_loaded": bool(os.getenv("GITHUB_CLIENT_SECRET"))
     }
+
