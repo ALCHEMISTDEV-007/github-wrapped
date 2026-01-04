@@ -4,6 +4,7 @@ from fastapi import APIRouter
 from fastapi.responses import RedirectResponse
 from dotenv import load_dotenv
 from github import fetch_user_repos
+from analytics import aggregate_languages
 
 
 load_dotenv()  # 👈I had a problem fetching client id& THIS IS My FIX
@@ -52,6 +53,7 @@ def callback(code: str):
 
     # 3. Fetch repositories
     repos = fetch_user_repos(access_token)
+    languages = aggregate_languages(repos)
 
     # 4. Return everything together
     return {
@@ -61,6 +63,7 @@ def callback(code: str):
         "avatar_url": user_data.get("avatar_url"),
         "followers": user_data.get("followers"),
         "repos_count": len(repos),
+        "languages": languages,
         "repos": [
             {
                 "name": repo.get("name"),
