@@ -6,9 +6,10 @@ from dotenv import load_dotenv
 from github import fetch_user_repos
 from analytics import aggregate_languages
 from github import fetch_repo_commits
-from analytics import analyze_commit_times
+from analytics import commit_time_analysis
 from analytics import calculate_consistency
 from analytics import rank_top_repo
+from analytics import generate_wrapped_summary
 
 
 load_dotenv()  # 👈I had a problem fetching client id& THIS IS My FIX
@@ -28,8 +29,8 @@ def login():
     return RedirectResponse(github_auth_url)
 @router.get("/callback")
 def callback(code: str):
-    # EVERYTHING below must be indented
 
+    # 1️⃣ Exchange code for access token
     token_url = "https://github.com/login/oauth/access_token"
     payload = {
         "client_id": CLIENT_ID,
@@ -45,19 +46,24 @@ def callback(code: str):
     if not access_token:
         return {"error": "Failed to get access token"}
 
-    user_api_url = "https://api.github.com/user"
-    user_headers = {
-        "Authorization": f"Bearer {access_token}",
-        "Accept": "application/json",
-    }
-    user_response = requests.get(user_api_url, headers=user_headers)
+    # 2️⃣ Fetch user profile
+    user_response = requests.get(
+        "https://api.github.com/user",
+        headers={
+            "Authorization": f"Bearer {access_token}",
+            "Accept": "application/json",
+        }
+    )
     user_data = user_response.json()
 
-    repos = fetch_user_repos(access_token)
-    top_repo = rank_top_repo(repos)
-    languages = aggregate_languages(repos)
-
+    # 3️⃣ Initialize variables (IMPORTANT)
+    repos = []
     all_commits = []
+
+    # 4️⃣ Fetch repositories
+    repos = fetch_user_repos(access_token)
+
+    # 5️⃣ Fetch commits
     for repo in repos:
         commits = fetch_repo_commits(
             owner=user_data.get("login"),
@@ -66,27 +72,15 @@ def callback(code: str):
         )
         all_commits.extend(commits)
 
-    commit_analysis = analyze_commit_times(all_commits)
-    consistency = calculate_consistency(commit_analysis["active_days"])
+    # 6️⃣ NOW generate wrapped summary (THIS is where it belongs)
+    wrapped_summary = generate_wrapped_summary(repos, all_commits)
 
+    # 7️⃣ Return everything
     return {
-        "message": "GitHub profile + repos fetched 🎉",
+        "message": "GitHub Wrapped generated 🎉",
         "username": user_data.get("login"),
         "name": user_data.get("name"),
         "avatar_url": user_data.get("avatar_url"),
-        "followers": user_data.get("followers"),
-        "repos_count": len(repos),
-        "languages": languages,
-        "commit_analysis": commit_analysis,
-        "consistency": consistency,
-        "top_repo": top_repo,
-        "repos": [
-            {
-                "name": repo.get("name"),
-                "stars": repo.get("stargazers_count"),
-                "language": repo.get("language"),
-                "updated_at": repo.get("updated_at"),
-            }
-            for repo in repos
-        ],
+        "wrapped": wrapped_summary,
+        "repos": repos,
     }

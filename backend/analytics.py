@@ -40,7 +40,7 @@ def rank_top_repo(repos):
     }
 
 
-def analyze_commit_times(commits):
+def commit_time_analysis(commits):
     hours = []
     days = set()
 
@@ -84,3 +84,16 @@ def calculate_consistency(active_days: int):
         return "Casual Explorer 🧭"
     else:
         return "On & Off Learner 🌱"
+def generate_wrapped_summary(repos, commits):
+    languages = aggregate_languages(repos)
+    commit_analysis = commit_time_analysis(commits)
+
+    personality = calculate_consistency(
+        commit_analysis["active_days"]
+    )
+
+    return {
+        "languages": languages,
+        "commit_analysis": commit_analysis,
+        "personality": personality
+    }
