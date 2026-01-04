@@ -12,6 +12,33 @@ def aggregate_languages(repos):
 
 from datetime import datetime
 from collections import Counter
+from datetime import datetime, timezone
+
+def rank_top_repo(repos):
+    def score(repo):
+        stars = repo.get("stargazers_count", 0)
+        updated_at = repo.get("updated_at")
+
+        recency_bonus = 0
+        if updated_at:
+            updated_date = datetime.fromisoformat(updated_at.replace("Z", "+00:00"))
+            days_ago = (datetime.now(timezone.utc) - updated_date).days
+            if days_ago <= 30:
+                recency_bonus = 5
+
+        return (stars * 10) + recency_bonus
+
+    if not repos:
+        return None
+
+    top_repo = max(repos, key=score)
+    return {
+        "name": top_repo.get("name"),
+        "stars": top_repo.get("stargazers_count"),
+        "language": top_repo.get("language"),
+        "updated_at": top_repo.get("updated_at"),
+    }
+
 
 def analyze_commit_times(commits):
     hours = []

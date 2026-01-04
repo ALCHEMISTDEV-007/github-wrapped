@@ -8,6 +8,7 @@ from analytics import aggregate_languages
 from github import fetch_repo_commits
 from analytics import analyze_commit_times
 from analytics import calculate_consistency
+from analytics import rank_top_repo
 
 
 load_dotenv()  # 👈I had a problem fetching client id& THIS IS My FIX
@@ -53,6 +54,7 @@ def callback(code: str):
     user_data = user_response.json()
 
     repos = fetch_user_repos(access_token)
+    top_repo = rank_top_repo(repos)
     languages = aggregate_languages(repos)
 
     all_commits = []
@@ -77,6 +79,7 @@ def callback(code: str):
         "languages": languages,
         "commit_analysis": commit_analysis,
         "consistency": consistency,
+        "top_repo": top_repo,
         "repos": [
             {
                 "name": repo.get("name"),
