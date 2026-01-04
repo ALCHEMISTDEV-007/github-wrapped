@@ -5,6 +5,8 @@ from fastapi.responses import RedirectResponse
 from dotenv import load_dotenv
 from github import fetch_user_repos
 from analytics import aggregate_languages
+from github import fetch_repo_commits
+from analytics import analyze_commit_times
 
 
 load_dotenv()  # 👈I had a problem fetching client id& THIS IS My FIX
@@ -22,10 +24,10 @@ def login():
         "&scope=read:user"
     )
     return RedirectResponse(github_auth_url)
-
 @router.get("/callback")
 def callback(code: str):
-    # 1. Exchange code for access token
+    # EVERYTHING below must be indented
+
     token_url = "https://github.com/login/oauth/access_token"
     payload = {
         "client_id": CLIENT_ID,
@@ -41,21 +43,28 @@ def callback(code: str):
     if not access_token:
         return {"error": "Failed to get access token"}
 
-    # 2. Fetch user profile
     user_api_url = "https://api.github.com/user"
     user_headers = {
         "Authorization": f"Bearer {access_token}",
         "Accept": "application/json",
     }
-
     user_response = requests.get(user_api_url, headers=user_headers)
     user_data = user_response.json()
 
-    # 3. Fetch repositories
     repos = fetch_user_repos(access_token)
     languages = aggregate_languages(repos)
 
-    # 4. Return everything together
+    all_commits = []
+    for repo in repos:
+        commits = fetch_repo_commits(
+            owner=user_data.get("login"),
+            repo=repo.get("name"),
+            access_token=access_token,
+        )
+        all_commits.extend(commits)
+
+    commit_analysis = analyze_commit_times(all_commits)
+
     return {
         "message": "GitHub profile + repos fetched 🎉",
         "username": user_data.get("login"),
@@ -64,6 +73,7 @@ def callback(code: str):
         "followers": user_data.get("followers"),
         "repos_count": len(repos),
         "languages": languages,
+        "commit_analysis": commit_analysis,
         "repos": [
             {
                 "name": repo.get("name"),
@@ -74,4 +84,3 @@ def callback(code: str):
             for repo in repos
         ],
     }
-
