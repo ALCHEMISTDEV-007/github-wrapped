@@ -47,3 +47,13 @@ def analyze_commit_times(commits):
         "commits_by_hour": dict(hour_counts),
         "personality": personality,
     }
+
+def calculate_consistency(active_days: int):
+    if active_days >= 100:
+        return "HardCore Grinder🔥"
+    elif active_days >= 40:
+        return "Consistent Builder 🧱"
+    elif active_days >=15:
+        return "Casual Explorer 🧭"
+    else:
+        return "On & Off Learner 🌱"

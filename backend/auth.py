@@ -7,6 +7,7 @@ from github import fetch_user_repos
 from analytics import aggregate_languages
 from github import fetch_repo_commits
 from analytics import analyze_commit_times
+from analytics import calculate_consistency
 
 
 load_dotenv()  # 👈I had a problem fetching client id& THIS IS My FIX
@@ -64,6 +65,7 @@ def callback(code: str):
         all_commits.extend(commits)
 
     commit_analysis = analyze_commit_times(all_commits)
+    consistency = calculate_consistency(commit_analysis["active_days"])
 
     return {
         "message": "GitHub profile + repos fetched 🎉",
@@ -74,6 +76,7 @@ def callback(code: str):
         "repos_count": len(repos),
         "languages": languages,
         "commit_analysis": commit_analysis,
+        "consistency": consistency,
         "repos": [
             {
                 "name": repo.get("name"),
