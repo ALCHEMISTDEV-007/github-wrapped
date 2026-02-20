@@ -8,12 +8,9 @@ from dotenv import load_dotenv
 from github import fetch_user_repos
 from analytics import aggregate_languages
 from github import fetch_repo_commits
-from analytics import commit_time_analysis
-from analytics import calculate_consistency
-from analytics import rank_top_repo
-from analytics import generate_wrapped_summary
-
-
+from analytics import (
+    generate_wrapped_summary
+)
 load_dotenv()  # 👈I had a problem fetching client id& THIS IS My FIX
 
 router = APIRouter()
@@ -82,6 +79,6 @@ def callback(code: str):
     encoded = urllib.parse.quote(json.dumps(payload))
 
     return RedirectResponse(
-        url=f"http://localhost:5173/wrapped?data={encoded}",
+        url=f"http://localhost:5173/wrapped.html?data={encoded}",
         status_code=302
     )

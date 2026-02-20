@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Wrapped | Your Results</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800;900&display=swap"
+        rel="stylesheet">
+</head>
+
+<body class="wrapped-page">
+    <div class="blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="loading-container">
+        <div class="loading-content">
+            <div class="mascot-container">
+                <img src="https://github.githubassets.com/images/icons/emoji/octocat.png" alt="GitHub Mascot"
+                    class="mascot-img thinking-animation">
+                <div class="thought-bubble">
+                    <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+                </div>
+            </div>
+            <h2 class="loading-text">crunching commits...</h2>
+            <div class="progress-bar-container">
+                <div class="progress-bar"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Wrapper App -->
+    <div id="app" class="app-container hidden">
+        <div class="progress-indicators" id="progress-indicators">
+            <!-- Dynamically populated -->
+        </div>
+
+        <div class="slides-container" id="slides-container">
+            <!-- Slide 1: Welcome -->
+            <div class="slide active" id="slide-1">
+                <div class="slide-content welcome-slide">
+                    <img id="user-avatar" src="" alt="Avatar" class="avatar-large">
+                    <h1>Ready, <span id="user-name" class="highlight"></span>?</h1>
+                    <p class="subtitle">Let's look back at your year.</p>
+                </div>
+            </div>
+
+            <!-- Slide 2: Stats -->
+            <div class="slide" id="slide-2">
+                <div class="slide-content stats-slide">
+                    <h2>The Numbers</h2>
+                    <div class="stats-grid">
+                        <div class="stat-card fade-up">
+                            <span class="stat-value" id="total-commits">0</span>
+                            <span class="stat-label">Total Commits</span>
+                        </div>
+                        <div class="stat-card fade-up" style="animation-delay: 0.2s;">
+                            <span class="stat-value" id="active-days">0</span>
+                            <span class="stat-label">Active Days</span>
+                        </div>
+                        <div class="stat-card fade-up" style="animation-delay: 0.4s;">
+                            <span class="stat-value" id="longest-streak">0</span>
+                            <span class="stat-label">Longest Streak</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 3: Top Repos -->
+            <div class="slide" id="slide-3">
+                <div class="slide-content repos-slide">
+                    <h2>Your Top Repos</h2>
+                    <div class="repos-list" id="top-repos-list">
+                        <!-- Dynamically populated -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 4: Languages -->
+            <div class="slide" id="slide-4">
+                <div class="slide-content languages-slide">
+                    <h2>Languages</h2>
+                    <div class="lang-container">
+                        <div class="pie-chart" id="pie-chart"></div>
+                        <div class="lang-legend" id="lang-legend">
+                            <!-- Dynamically populated -->
+                        </div>
+                    </div>
+                    <p class="flavor-text" id="lang-flavor-text">You followed the trend of ML... still never forgot your
+                        roots.</p>
+                </div>
+            </div>
+
+            <!-- Slide 5: Personality -->
+            <div class="slide" id="slide-5">
+                <div class="slide-content personality-slide">
+                    <h2 class="personality-header-main">Your Coding Personality</h2>
+                    <div class="personality-card-wrapper" id="card-capture-area">
+                        <div class="personality-card fade-up" id="personality-card">
+                            <div class="card-header">
+                                <span class="rarity-badge" id="personality-rarity"></span>
+                            </div>
+                            <!-- Generated Image Area -->
+                            <div class="card-image-container">
+                                <img id="personality-image" src="" alt="Personality Visualization"
+                                    class="personality-art hidden">
+                                <div id="image-loader" class="image-loader pulse"></div>
+                            </div>
+                            <div class="card-body">
+                                <h3 id="personality-title" class="glitch-text"></h3>
+                                <p id="personality-desc"></p>
+                            </div>
+                            <div class="card-footer">
+                                <span class="watermark">GitHub Wrapped 2026</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="action-buttons fade-up" style="animation-delay: 1s;">
+                        <button class="btn-primary" id="btn-share">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="icon">
+                                <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
+                                <polyline points="16 6 12 2 8 6" />
+                                <line x1="12" y1="2" x2="12" y2="15" />
+                            </svg>
+                            Share Wrapped
+                        </button>
+                        <button class="btn-secondary" id="btn-download">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="icon">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                <polyline points="7 10 12 15 17 10" />
+                                <line x1="12" y1="15" x2="12" y2="3" />
+                            </svg>
+                            Save Card
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="controls">
+            <div class="nav-zone left-zone" id="prev-btn"></div>
+            <div class="nav-zone right-zone" id="next-btn"></div>
+        </div>
+    </div>
+
+    <!-- Required Libraries -->
+    <script src="html2canvas.min.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>
